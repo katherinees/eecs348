@@ -1,0 +1,42 @@
+the way I finally figured it out was by doing it all out on paper, creating and deleting
+  objects and entries in dictionaries as I needed them. then I kind of reverse engineered
+  that to come up with the following. probably not optimized but whatever.
+
+here’s what we’re gonna do:
+
+scores = {} is the dictionary of dictionaries, to be returned.
+
+visited = {} is a dictionary containing entries ‘place’: t, where t is the time 
+  it took to get to that place.
+
+times = {} is a dictionary containing entries ‘place’: t, where t is the time it 
+  took to get to that place, basically the same as visited, but visited only contains 
+  the places that we’ve visited/expanded. so like at the end of the second test, times 
+  has an entry for YWCA, but visited doesn’t.
+
+next_best is the thing we are expanding in the while loop. so like, first
+  it's campus, then Lighthouse etc. during the while loop, we're looking
+  for what the next next_best will be. it's in the form
+  ['place', time to get there, distance to endpoint]
+
+so first let next_best = [start, 0, dis_map[start][end]]
+
+while we haven't found the end node/place yet, "visit" ("expand", i guess) next_best
+add next_best place to visited with the time it took to get there
+if it's in seen, remove it
+make a dictionary. calculate the heuristic for each of the places adjacent to
+  next_best, and put all that in this dictionary. update scores with this dictionary.
+for each place adjacent to next_best:
+  if it's end, break
+  if we've already seen this place before (e.g. for time_map2 when we already saw 
+    whole foods with heuristic = 15, but now we're seeing it and the heuristic is 10), 
+    then check if the heuristic is lower now. if it is, then update seen and times 
+    dictionaries. then next_best is the minimum entry from the seen dictionary.
+  if we haven't seen this place before (and haven't visited it):
+    figure out if this place has the new lowest heuristic. If it does, then that's the
+    new best. if it's equal to some other place's heuristic, the new_best should be the
+    one with a lower time to get there, i.e. lower g(x). (this makes the test pass. e.g.
+    for time_map2, we want to go to Beach not YWCA. If it's not the new lowest heuristic
+    then next_best is the minimum entry from the seen dictionary. In any case, add this
+    place to seen with its heuristic, and to times with its time. 
+return scores
