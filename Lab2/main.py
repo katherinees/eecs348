@@ -26,18 +26,18 @@ boardC = [['x','o','x','o','x','o'],
 
 ans1 = [((2, 1), (0, 1)), ((2, 3), (2, 1))]
 
-ans2 = [((3, 5), (3, 3)), ((4, 2), (2, 2)), 
-        ((1, 3), (1, 1)), ((4, 4), (2, 4)), 
-        ((5, 5), (3, 5)), ((5, 3), (5, 5)), 
-        ((5, 1), (5, 3)), ((4, 0), (4, 2)), 
-        ((3, 1), (1, 1)), ((4, 2), (2, 2)), 
+ans2 = [((3, 5), (3, 3)), ((4, 2), (2, 2)),
+        ((1, 3), (1, 1)), ((4, 4), (2, 4)),
+        ((5, 5), (3, 5)), ((5, 3), (5, 5)),
+        ((5, 1), (5, 3)), ((4, 0), (4, 2)),
+        ((3, 1), (1, 1)), ((4, 2), (2, 2)),
         ((2, 2), (2, 0))]
 
-ans3 = [((3, 5), (3, 3)), ((4, 2), (2, 2)), 
-        ((1, 3), (1, 1)), ((4, 4), (2, 4)), 
-        ((5, 5), (3, 5)), ((5, 3), (5, 5)), 
-        ((3, 1), (1, 1)), ((4, 0), (4, 2)), 
-        ((4, 2), (2, 2)), ((2, 2), (2, 0)), 
+ans3 = [((3, 5), (3, 3)), ((4, 2), (2, 2)),
+        ((1, 3), (1, 1)), ((4, 4), (2, 4)),
+        ((5, 5), (3, 5)), ((5, 3), (5, 5)),
+        ((3, 1), (1, 1)), ((4, 0), (4, 2)),
+        ((4, 2), (2, 2)), ((2, 2), (2, 0)),
         ((2, 4), (2, 2)), ((2, 2), (2, 4))]
 
 # specification of boards, gold sequences and game parameters used to test student code
@@ -55,7 +55,7 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
 
     moves_x = []
     moves_o = []
-    
+
     b = kb.KonaneBoard(board)
 
     # instantiates student and grader players based upon students' 'x' or 'o' designation
@@ -102,7 +102,7 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
                 if verbose:
                     print 'PlayerO moved', move
                     print(b)
-                    
+
     if verbose:
         print('Game Over.')
 
@@ -111,7 +111,7 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
         return(moves_x)
     else:
         return(moves_o)
-            
+
 
 def main():
     print('Starting Konane tests...\n')
