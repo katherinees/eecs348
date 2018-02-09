@@ -26,7 +26,7 @@ def humanVsAI(human,ai_algorithm,board):
     print('  Human Playing as: %s' % human)
     print('  Starting Board:')
     print(b)
-    
+
     moves_o = []
     moves_x = []
 

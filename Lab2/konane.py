@@ -130,11 +130,11 @@ class KonaneBoard:
     def firstMove(self, s, r, c):
         # makes a first move
         self.state[r][c] = ' '
-        
+
     def nextMove(self, s, move):
         for frm, to in zip(move, move[1:]):
             self._makeJump(s, frm, to)
-    
+
     def _makeJump(self, s, frm, to):
         self.state[frm[0]][frm[1]] = ' '
         self.state[to[0]][to[1]] = s

@@ -85,76 +85,76 @@ class player:
             print "WE HIT IT"
         return next_move
 
-    def getMinimaxMove(self, dep, isMaxPlayer):
-        if (isMaxPlayer):
-            [m, h] = self.findMax(dep, isMaxPlayer)
-        else:
-            possible = self.b.possibleNextMoves(self.s)
-            m = possible[0]
+    def my_heuristic(self, board, side):
+        score = len(board.possibleNextMoves(side)) - len(board.possibleNextMoves(self.opposite(side))) + \
+            int(board.state[0][0]==side) + \
+            int(board.state[0][board.size-1]==side) + \
+            int(board.state[board.size-1][0]==side) + \
+            int(board.state[board.size-1][board.size-1]==side)
+        #print "heuristic", board, player, score
+        return score
+
+    def getMinimaxMove(self):
+        [m, h] = self.findMax(self.b, self.depth, self.s)
+        # print "the heuristic for", m, "is", h
         return m
 
-    def findMax(self):
-        print "do findMax function, depth is", self.depth
-        moves = self.b.possibleNextMoves(self.s)
+    def findMax(self, current_board, current_depth, side):
+        # print "do findMax function, depth is", current_depth
+        moves = current_board.possibleNextMoves(side)
         if (len(moves) == 0):
-            print "no more moves"
-            h = self.heuristic(b, self.s)
+            # print "no more moves"
+            h = self.heuristic(current_board, side)
             return [None, h]
-        if (self.depth == 0):
-            m = self.getFirstMove()
-            h = self.heuristic(b, self.s)
+        if (current_depth == 0):
+            poss_moves = current_board.possibleNextMoves(side)
+            m = poss_moves[0]
+            # print "i'm at line 112"
+            h = self.heuristic(current_board, side)
             return [m, h]
 
-        print self.s, "is max player"
+        # print side, "is max player"
         best_h = float('-Infinity')
+        best_move = moves[0]
         # ie for each child node
         for m in moves:
-            # copy myself and make the move in question
-            # testplayer = player(copy.deepcopy(self.b), self.s, self.depth, self.algo)
-            # print "testplayer", testplayer.depth, testplayer.s, testplayer.algo
-            # testplayer.makeNextMove(m)
-            # actually just get the board
-            childboard = copy.deepcopy(self.b)
-            childboard.nextMove(self.s, m)
-            
-            # see what kind of heuristic that gets me
-            # h = testplayer.heuristic(b, player)
-            # [child_m, child_h] = testplayer.findMin(depth, False)
-            # print "if we did ", m, "we get board", childboard
-            # if (child_h > best_h):
-            #     best_h = child_h
-            #     next_move = m
-        return
+            childboard = copy.deepcopy(current_board)
+            childboard.nextMove(side, m)
+            opp = self.opposite(side)
+            [poss_move, h] = self.findMin(childboard, current_depth-1, opp)
+            if (h > best_h):
+                best_h = h
+                best_move = m
+        return [best_move, best_h]
 
-    def findMin(self, dep, isMaxPlayer):
-        # if depth = 0 or terminal node, return heuristic
-        print "do findMin function, depth is", dep
-        moves = self.b.possibleNextMoves(self.s)
+    def findMin(self, current_board, current_depth, side):
+        # print "do findMin function, depth is", current_depth
+        moves = current_board.possibleNextMoves(side)
         if (len(moves) == 0):
-            print "no more moves"
-            h = self.heuristic(b, self.s)
+            # print "no more moves"
+            h = self.heuristic(current_board, side)
             return [None, h]
-        if (dep == 0):
-            m = self.getFirstMove()
-            h = self.heuristic(b, self.s)
+        if (current_depth == 0):
+            poss_moves = current_board.possibleNextMoves(side)
+            m = poss_moves[0]
+            # print "this is the board that breaks", current_board
+            # print "i'm at line 140"
+            h = self.heuristic(current_board, side)
             return [m, h]
 
+        # print side, "is min player"
         best_h = float('Infinity')
+        best_move = moves[0]
         # ie for each child node
         for m in moves:
-            # copy myself and make the move in question
-            testplayer = player(copy.deepcopy(self.b), self.s, self.depth, self.algo)
-            print "testplayer", testplayer.depth, testplayer.s, testplayer.algo
-            testplayer.makeNextMove(m)
-            print "OKAY SO IF IT DID", m, testplayer.b
-            # see what kind of heuristic that gets me
-            # h = testplayer.heuristic(b, player)
-            [child_m, child_h] = testplayer.findMax(0, True)
-            print "if we did ", m, " has a heuristic of ", child_h
-            if (child_h < best_h):
-                best_h = child_h
-                next_move = m
-        return [next_move, best_h]
+            childboard = copy.deepcopy(current_board)
+            childboard.nextMove(side, m)
+            opp = self.opposite(side)
+            [poss_move, h] = self.findMax(childboard, current_depth-1, opp)
+            if (h < best_h):
+                best_h = h
+                best_move = m
+        return [best_move, best_h]
 
 
 
@@ -174,12 +174,15 @@ class player:
             return 'x'
 
     def heuristic(self, board, player):
+        # print board
         score = len(board.possibleNextMoves(self.s)) - len(board.possibleNextMoves(self.opposite(self.s))) + \
             int(board.state[0][0]==self.s) + \
             int(board.state[0][board.size-1]==self.s) + \
             int(board.state[board.size-1][0]==self.s) + \
             int(board.state[board.size-1][board.size-1]==self.s)
         #print "heuristic", board, player, score
+        #print score
+        #exit(0)
         return score
 
     # member function called by test() which specifies move to be made for player's turn, with move
@@ -202,7 +205,7 @@ class player:
             move = self.getRandomMove()
 
         if self.algo == 'MiniMax':  # player must select best move based upon MiniMax algorithm
-            move = self.getMinimaxMove(self.depth, True)
+            move = self.getMinimaxMove()
 
         if self.algo == 'AlphaBeta':  # player must select best move based upon AlphaBeta algorithm
             move = self.getAlphaBetaMove()
@@ -345,20 +348,30 @@ xo =        game1[6]
 b = kb.KonaneBoard(copy.deepcopy(boardA))
 print b
 kath = player(b, 'o', 5, "MiniMax")
-mo = player(b, 'x', 5, 'First Move')
-# foo = kath.heuristic(b, 'x')
-# li= kath.getNextMoves()
-# print kath.getMinimaxMove()
-# print foo
+gr = player(b, 'x', 5, 'First Move')
+
 options = kath.getNextMoves()
-print options
+print "kath has these options for first move", options
 [done, move] = kath.takeTurn()
-print "kath did ", move
-print b
-momove = mo.getFirstMove()
-mo.makeNextMove(momove)
-print "mo does", momove
-print b
+print "1. kath did ", move
+# print b
+grmove = gr.getFirstMove()
+gr.makeNextMove(grmove)
+print "1. gr does", grmove
+# print b
+
+options = kath.getNextMoves()
+print "kath has these for 2", options
 [done, move] = kath.takeTurn()
-print "kath did ", move
-print b
+print "2. kath did ", move
+# print b
+
+grmove = gr.getFirstMove()
+gr.makeNextMove(grmove)
+print "2. gr does", grmove
+# print b
+
+options = kath.getNextMoves()
+print "kath has these for 3", options
+[done, move] = kath.takeTurn()
+print "3. kath did ", move

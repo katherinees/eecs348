@@ -2,6 +2,7 @@ import copy
 import random
 import konane as kb
 import student_code as student
+# import mytesting as student
 
 # sample boards used for evaluation of student implementations
 
