@@ -1,0 +1,45 @@
+I more or less followed the pseudo from https://en.wikipedia.org/wiki/Minimax .
+
+def getMinimaxMove(self):
+  [m, h] = self.findMax(self.b, self.depth, self.s)
+  return m
+  
+all getMinimaxMove does is call findMax, which makes sense because when first called, we're 
+always the maximizing player. 
+
+def findMax(self, current_board, current_depth, side):
+  what's confusing about the existing implementation is that we have to call getMinimaxMove
+  on a player. so we have to call findMax on a player too. but what we really care about is
+  what the board looks like right now, what depth we're at, and what side we're on. so at some
+  point, findMax is going to be called on a player and given a side which is not that player's 
+  side, e.g. player.s != side. and that's okay. 
+  
+  this function is going to return [best_move, best_h], where best_move is a move and best_h
+  is a heuristic.
+  
+  if depth = 0, return [None, current board's heuristic]
+  if there's no moves left, return [first possible move (see piazza), current board's heuristic]
+  
+  initialize best_h as -Inf and best_move as the first possible move from the list
+  
+  now we need to traverse the tree, as it were. the 'child node' of the current board is what
+  the current board would look like if a player took a particular move.
+  so for each move in the list of possible moves the current side has for this board:
+    copy the current board, and do the move.
+    [possible move, h] = findMin(childboard, current_depth-1, opposite side of current side)
+    if h > best_h, then best_h = h and best_move = current move
+  return [best_move, best_h]
+  
+def findMin(self, current_board, current_depth, side):
+  pretty much works the exact same way as findMax, just best_h is initialized to +Inf, and we'll
+  call findMax with the childboard, and we want best_h to be as low as possible.
+
+the getAlphaBetaMove works pretty much the exact same way, with two helper functions abMax and
+abMin, and adding in the alpha and beta parameters. again, I pretty much followed the
+pseudocode from https://en.wikipedia.org/wiki/Alpha–beta_pruning . thx wikipedia.
+
+also, if you want to time things, add "from time import time" to main.py. at the very beginning of
+test, add "t0 = time()", at the end add "t1 = time()", and then "print t1-t0". my Game 0 passed in 
+0.04s, Game 1 in 30s, Game 2 in 3.2s, Game 3 in 37.5s.
+  
+  
