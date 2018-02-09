@@ -58,13 +58,13 @@ game4 = [copy.deepcopy(boardC),ans4,100,7,'First Move','AlphaBeta','x']
 
 games = [game1,game2,game3,game4]
 
-verbose = False # flag to control level of debugging output
+verbose = True # flag to control level of debugging output
 
 # function used to test student implementation for an individual game
 def test(board,max_moves,depth,algoG,algoS,student_xo):
     moves_x = []
     moves_o = []
-    
+
     b = kb.KonaneBoard(board)
 
     # instantiates student and grader players based upon students' 'x' or 'o' designation
@@ -111,7 +111,7 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
                 if verbose:
                     print 'PlayerO moved', move
                     print(b)
-                    
+
     if verbose:
         print('Game Over.')
 
@@ -120,7 +120,7 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
         return(moves_x)
     else:
         return(moves_o)
-            
+
 def main():
     print('Starting Konane tests...\n')
 
@@ -145,4 +145,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

@@ -73,6 +73,7 @@ class player:
         ######################
         ##  Put codes here  ##
         ######################
+        return
 
 
 
@@ -82,6 +83,7 @@ class player:
         ######################
         ##  Put codes here  ##
         ######################
+        return
 
 
     def opposite(self,s):

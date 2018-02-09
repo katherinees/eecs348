@@ -66,11 +66,95 @@ class player:
 
     # minimax algorithm to be completed by students
     # note: you may add parameters to this function call
-    def getMinimaxMove(self):
-        ######################
-        ##  Put codes here  ##
-        ######################
+    def getMiniC(self, dep, isMaxPlayer):
+        # if depth = 0 or node is a terminal node
+        # return the heuristic value of node
+        print "depth is ", dep
+        moves = self.b.possibleNextMoves(self.s)
+        if (len(moves) == 0):
+            print "no more moves"
+            h = self.heuristic(b, self.s)
+            return None
+        next_move = moves[0]
+        if (dep == 0):
+            return self.heuristic(b, self.s)
+
+        if isMaxPlayer:
+            [next_move, best_h] = self.findMax(dep, isMaxPlayer)
+        else:
+            print "WE HIT IT"
+        return next_move
+
+    def getMinimaxMove(self, dep, isMaxPlayer):
+        if (isMaxPlayer):
+            [m, h] = self.findMax(dep, isMaxPlayer)
+        else:
+            possible = self.b.possibleNextMoves(self.s)
+            m = possible[0]
+        return m
+
+    def findMax(self):
+        print "do findMax function, depth is", self.depth
+        moves = self.b.possibleNextMoves(self.s)
+        if (len(moves) == 0):
+            print "no more moves"
+            h = self.heuristic(b, self.s)
+            return [None, h]
+        if (self.depth == 0):
+            m = self.getFirstMove()
+            h = self.heuristic(b, self.s)
+            return [m, h]
+
+        print self.s, "is max player"
+        best_h = float('-Infinity')
+        # ie for each child node
+        for m in moves:
+            # copy myself and make the move in question
+            # testplayer = player(copy.deepcopy(self.b), self.s, self.depth, self.algo)
+            # print "testplayer", testplayer.depth, testplayer.s, testplayer.algo
+            # testplayer.makeNextMove(m)
+            # actually just get the board
+            childboard = copy.deepcopy(self.b)
+            childboard.nextMove(self.s, m)
+            
+            # see what kind of heuristic that gets me
+            # h = testplayer.heuristic(b, player)
+            # [child_m, child_h] = testplayer.findMin(depth, False)
+            # print "if we did ", m, "we get board", childboard
+            # if (child_h > best_h):
+            #     best_h = child_h
+            #     next_move = m
         return
+
+    def findMin(self, dep, isMaxPlayer):
+        # if depth = 0 or terminal node, return heuristic
+        print "do findMin function, depth is", dep
+        moves = self.b.possibleNextMoves(self.s)
+        if (len(moves) == 0):
+            print "no more moves"
+            h = self.heuristic(b, self.s)
+            return [None, h]
+        if (dep == 0):
+            m = self.getFirstMove()
+            h = self.heuristic(b, self.s)
+            return [m, h]
+
+        best_h = float('Infinity')
+        # ie for each child node
+        for m in moves:
+            # copy myself and make the move in question
+            testplayer = player(copy.deepcopy(self.b), self.s, self.depth, self.algo)
+            print "testplayer", testplayer.depth, testplayer.s, testplayer.algo
+            testplayer.makeNextMove(m)
+            print "OKAY SO IF IT DID", m, testplayer.b
+            # see what kind of heuristic that gets me
+            # h = testplayer.heuristic(b, player)
+            [child_m, child_h] = testplayer.findMax(0, True)
+            print "if we did ", m, " has a heuristic of ", child_h
+            if (child_h < best_h):
+                best_h = child_h
+                next_move = m
+        return [next_move, best_h]
 
 
 
@@ -118,7 +202,7 @@ class player:
             move = self.getRandomMove()
 
         if self.algo == 'MiniMax':  # player must select best move based upon MiniMax algorithm
-            move = self.getMinimaxMove()
+            move = self.getMinimaxMove(self.depth, True)
 
         if self.algo == 'AlphaBeta':  # player must select best move based upon AlphaBeta algorithm
             move = self.getAlphaBetaMove()
@@ -151,21 +235,31 @@ boardC = [['x','o','x','o','x','o'],
 
 # 'gold' sequences of moves that students' implementations must match
 
-ans1 = [((2, 1), (0, 1)), ((2, 3), (2, 1))]
+ans1 = [((0, 3), (0, 1)), ((2, 3), (0, 3)), ((2, 1), (2, 3))]
 
 ans2 = [((3, 5), (3, 3)), ((4, 2), (2, 2)),
-        ((1, 3), (1, 1)), ((4, 4), (2, 4)),
-        ((5, 5), (3, 5)), ((5, 3), (5, 5)),
-        ((5, 1), (5, 3)), ((4, 0), (4, 2)),
-        ((3, 1), (1, 1)), ((4, 2), (2, 2)),
-        ((2, 2), (2, 0))]
+        ((1, 3), (1, 1)), ((3, 3), (1, 3)),
+        ((4, 4), (2, 4)), ((5, 5), (3, 5)),
+        ((4, 0), (4, 2)), ((2, 0), (4, 0)),
+        ((5, 3), (5, 5)), ((4, 2), (4, 4)),
+        ((0, 4), (0, 2)), ((4, 0), (4, 2)),
+        ((5, 1), (5, 3)), ((4, 2), (4, 4))]
 
 ans3 = [((3, 5), (3, 3)), ((4, 2), (2, 2)),
-        ((1, 3), (1, 1)), ((4, 4), (2, 4)),
-        ((5, 5), (3, 5)), ((5, 3), (5, 5)),
-        ((3, 1), (1, 1)), ((4, 0), (4, 2)),
-        ((4, 2), (2, 2)), ((2, 2), (2, 0)),
-        ((2, 4), (2, 2)), ((2, 2), (2, 4))]
+        ((1, 3), (1, 1)), ((3, 3), (1, 3)),
+        ((4, 4), (2, 4)), ((5, 5), (3, 5)),
+        ((4, 0), (4, 2)), ((2, 0), (4, 0)),
+        ((5, 3), (5, 5)), ((4, 2), (4, 4)),
+        ((0, 4), (0, 2)), ((4, 0), (4, 2)),
+        ((5, 1), (5, 3)), ((4, 2), (4, 4))]
+
+ans4 = [((3, 5), (3, 3)), ((4, 2), (2, 2)),
+        ((1, 3), (1, 1)), ((3, 3), (1, 3)),
+        ((5, 5), (3, 5)), ((4, 0), (4, 2)),
+        ((2, 0), (4, 0)), ((3, 1), (1, 1)),
+        ((0, 4), (0, 2)), ((4, 4), (2, 4)),
+        ((5, 3), (5, 5)), ((5, 1), (5, 3)),
+        ((4, 0), (4, 2))]
 
 # specification of boards, gold sequences and game parameters used to test student code
 game1 = [copy.deepcopy(boardA),ans1,100,5,'First Move','MiniMax','o']
@@ -235,6 +329,9 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
         return(moves_x)
     else:
         return(moves_o)
+def getMMMove(p):
+    moves = p.getNextMoves()
+    return moves[0]
 
 game1 = [copy.deepcopy(boardA),ans1,100,5,'First Move','MiniMax','o']
 board =     game1[0][:]
@@ -246,10 +343,22 @@ algoG =     game1[5]
 xo =        game1[6]
 # test(board,max_moves,depth,algoS,algoG,xo)
 b = kb.KonaneBoard(copy.deepcopy(boardA))
-kath = player(b, 'x', 5, "MiniMax")
-li = kath.getNextMoves()
-print li[0]
-foo = kath.heuristic(b, 'x')
-print foo
-kath.makeNextMove(li[0])
+print b
+kath = player(b, 'o', 5, "MiniMax")
+mo = player(b, 'x', 5, 'First Move')
+# foo = kath.heuristic(b, 'x')
+# li= kath.getNextMoves()
+# print kath.getMinimaxMove()
+# print foo
+options = kath.getNextMoves()
+print options
+[done, move] = kath.takeTurn()
+print "kath did ", move
+print b
+momove = mo.getFirstMove()
+mo.makeNextMove(momove)
+print "mo does", momove
+print b
+[done, move] = kath.takeTurn()
+print "kath did ", move
 print b
