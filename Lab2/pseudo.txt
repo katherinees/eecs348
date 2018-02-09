@@ -17,15 +17,15 @@ def findMax(self, current_board, current_depth, side):
   this function is going to return [best_move, best_h], where best_move is a move and best_h
   is a heuristic.
   
-  if depth = 0, return [None, current board's heuristic]
-  if there's no moves left, return [first possible move (see piazza), current board's heuristic]
+  if depth = 0, return return [first possible move (see piazza), current board's heuristic] 
+  if there's no moves left, [None, current board's heuristic]
   
   initialize best_h as -Inf and best_move as the first possible move from the list
   
   now we need to traverse the tree, as it were. the 'child node' of the current board is what
   the current board would look like if a player took a particular move.
   so for each move in the list of possible moves the current side has for this board:
-    copy the current board, and do the move.
+    deep copy the current board, and do the move.
     [possible move, h] = findMin(childboard, current_depth-1, opposite side of current side)
     if h > best_h, then best_h = h and best_move = current move
   return [best_move, best_h]
