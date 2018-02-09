@@ -2,6 +2,7 @@ import copy
 import random
 import konane as kb
 import student_code as student
+from time import time
 # import mytesting as student
 
 # sample boards used for evaluation of student implementations
@@ -59,10 +60,11 @@ game4 = [copy.deepcopy(boardC),ans4,100,7,'First Move','AlphaBeta','x']
 
 games = [game1,game2,game3,game4]
 
-verbose = True # flag to control level of debugging output
+verbose = False # flag to control level of debugging output
 
 # function used to test student implementation for an individual game
 def test(board,max_moves,depth,algoG,algoS,student_xo):
+    t0 = time()
     moves_x = []
     moves_o = []
 
@@ -115,6 +117,8 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
 
     if verbose:
         print('Game Over.')
+    t1 = time()
+    print "time it took was", t1-t0
 
     # returns appropriate list of moves based upon player's 'x' or 'o' designation
     if student_xo == 'x':

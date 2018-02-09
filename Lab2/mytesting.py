@@ -156,15 +156,75 @@ class player:
                 best_move = m
         return [best_move, best_h]
 
+    def abMax(self, current_board, current_depth, side, alpha, beta):
+        # if depth = 0 or no more moves (terminal node)
+        moves = current_board.possibleNextMoves(side)
+        if (len(moves) == 0):
+            # print "no more moves"
+            h = self.heuristic(current_board, side)
+            return [None, h]
+        if (current_depth == 0):
+            poss_moves = current_board.possibleNextMoves(side)
+            m = poss_moves[0]
+            # print "i'm at line 112"
+            h = self.heuristic(current_board, side)
+            return [m, h]
 
+        best_h = float('-Infinity')
+        best_move = moves[0]
+        # for each child node
+        for m in moves:
+            childboard = copy.deepcopy(current_board)
+            childboard.nextMove(side, m)
+            opp = self.opposite(side)
+            [poss_move, h] = self.abMin(childboard, current_depth-1, opp, alpha, beta)
+            if (h > best_h):
+                best_h = h
+                best_move = m
+            if (best_h > alpha):
+                alpha = best_h
+            if (beta <= alpha):
+                break
+        return [best_move, best_h]
+
+    def abMin(self, current_board, current_depth, side, alpha, beta):
+        # if depth = 0 or no more moves (terminal node)
+        moves = current_board.possibleNextMoves(side)
+        if (len(moves) == 0):
+            # print "no more moves"
+            h = self.heuristic(current_board, side)
+            return [None, h]
+        if (current_depth == 0):
+            poss_moves = current_board.possibleNextMoves(side)
+            m = poss_moves[0]
+            # print "i'm at line 112"
+            h = self.heuristic(current_board, side)
+            return [m, h]
+
+        best_h = float('Infinity')
+        best_move = moves[0]
+        # for each child node
+        for m in moves:
+            childboard = copy.deepcopy(current_board)
+            childboard.nextMove(side, m)
+            opp = self.opposite(side)
+            [poss_move, h] = self.abMax(childboard, current_depth-1, opp, alpha, beta)
+            if (h < best_h):
+                best_h = h
+                best_move = m
+            if (best_h < beta):
+                beta = best_h
+            if (beta <= alpha):
+                break
+        return [best_move, best_h]
 
     # alphabeta algorithm to be completed by students
     # note: you may add parameters to this function call
     def getAlphaBetaMove(self):
-        ######################
-        ##  Put codes here  ##
-        ######################
-        return
+        alpha = float('-Infinity')
+        beta = float('Infinity')
+        [m, h] = self.abMax(self.b, self.depth, self.s, alpha, beta)
+        return m
 
 
     def opposite(self,s):
@@ -332,9 +392,6 @@ def test(board,max_moves,depth,algoG,algoS,student_xo):
         return(moves_x)
     else:
         return(moves_o)
-def getMMMove(p):
-    moves = p.getNextMoves()
-    return moves[0]
 
 game1 = [copy.deepcopy(boardA),ans1,100,5,'First Move','MiniMax','o']
 board =     game1[0][:]
@@ -345,10 +402,10 @@ algoS =     game1[4]
 algoG =     game1[5]
 xo =        game1[6]
 # test(board,max_moves,depth,algoS,algoG,xo)
-b = kb.KonaneBoard(copy.deepcopy(boardA))
+b = kb.KonaneBoard(copy.deepcopy(boardC))
 print b
-kath = player(b, 'o', 5, "MiniMax")
-gr = player(b, 'x', 5, 'First Move')
+kath = player(b, 'x', 5, 'AlphaBeta')
+gr = player(b, 'o', 5, 'First Move')
 
 options = kath.getNextMoves()
 print "kath has these options for first move", options
@@ -359,19 +416,7 @@ grmove = gr.getFirstMove()
 gr.makeNextMove(grmove)
 print "1. gr does", grmove
 # print b
-
 options = kath.getNextMoves()
-print "kath has these for 2", options
+print "kath has these options for second move", options
 [done, move] = kath.takeTurn()
 print "2. kath did ", move
-# print b
-
-grmove = gr.getFirstMove()
-gr.makeNextMove(grmove)
-print "2. gr does", grmove
-# print b
-
-options = kath.getNextMoves()
-print "kath has these for 3", options
-[done, move] = kath.takeTurn()
-print "3. kath did ", move

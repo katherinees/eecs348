@@ -70,54 +70,56 @@ class player:
     # minimax algorithm to be completed by students
     # note: you may add parameters to this function call
     def getMinimaxMove(self):
+        # when first called, we're always the maximizing player
         [m, h] = self.findMax(self.b, self.depth, self.s)
-        # print "the heuristic for", m, "is", h
         return m
 
     def findMax(self, current_board, current_depth, side):
-        # print "do findMax function, depth is", current_depth
+        # if depth = 0, or no more moves (terminal move)
+        # then just return the heuristic
         moves = current_board.possibleNextMoves(side)
         if (len(moves) == 0):
-            # print "no more moves"
             h = self.heuristic(current_board, side)
             return [None, h]
         if (current_depth == 0):
+            # at max depth, we return the first move (see piazza)
             poss_moves = current_board.possibleNextMoves(side)
             m = poss_moves[0]
-            # print "i'm at line 112"
             h = self.heuristic(current_board, side)
             return [m, h]
 
-        # print side, "is max player"
+        # initialize best_h and best_move with placeholders
         best_h = float('-Infinity')
         best_move = moves[0]
         # ie for each child node
         for m in moves:
+            # get the board of the child node, ie figure out what
+            # the board would look like if we did this move
             childboard = copy.deepcopy(current_board)
             childboard.nextMove(side, m)
             opp = self.opposite(side)
             [poss_move, h] = self.findMin(childboard, current_depth-1, opp)
+            # using '>' instead of '>=' or 'max' makes sure if there's
+            # a tie, we use the order given by possibleNextMoves
             if (h > best_h):
                 best_h = h
                 best_move = m
         return [best_move, best_h]
 
     def findMin(self, current_board, current_depth, side):
-        # print "do findMin function, depth is", current_depth
+        # if depth = 0, or no more moves (terminal move)
+        # then just return the heuristic
         moves = current_board.possibleNextMoves(side)
         if (len(moves) == 0):
-            # print "no more moves"
             h = self.heuristic(current_board, side)
             return [None, h]
         if (current_depth == 0):
+            # at max depth, we return the first move (see piazza)
             poss_moves = current_board.possibleNextMoves(side)
             m = poss_moves[0]
-            # print "this is the board that breaks", current_board
-            # print "i'm at line 140"
             h = self.heuristic(current_board, side)
             return [m, h]
 
-        # print side, "is min player"
         best_h = float('Infinity')
         best_move = moves[0]
         # ie for each child node
@@ -131,14 +133,72 @@ class player:
                 best_move = m
         return [best_move, best_h]
 
+    def abMax(self, current_board, current_depth, side, alpha, beta):
+        # if depth = 0 or no more moves (terminal node)
+        moves = current_board.possibleNextMoves(side)
+        if (len(moves) == 0):
+            h = self.heuristic(current_board, side)
+            return [None, h]
+        if (current_depth == 0):
+            poss_moves = current_board.possibleNextMoves(side)
+            m = poss_moves[0]
+            h = self.heuristic(current_board, side)
+            return [m, h]
+
+        best_h = float('-Infinity')
+        best_move = moves[0]
+        # for each child node
+        for m in moves:
+            childboard = copy.deepcopy(current_board)
+            childboard.nextMove(side, m)
+            opp = self.opposite(side)
+            [poss_move, h] = self.abMin(childboard, current_depth-1, opp, alpha, beta)
+            if (h > best_h):
+                best_h = h
+                best_move = m
+            if (best_h > alpha):
+                alpha = best_h
+            if (beta <= alpha):
+                # pruning
+                break
+        return [best_move, best_h]
+
+    def abMin(self, current_board, current_depth, side, alpha, beta):
+        # if depth = 0 or no more moves (terminal node)
+        moves = current_board.possibleNextMoves(side)
+        if (len(moves) == 0):
+            h = self.heuristic(current_board, side)
+            return [None, h]
+        if (current_depth == 0):
+            poss_moves = current_board.possibleNextMoves(side)
+            m = poss_moves[0]
+            h = self.heuristic(current_board, side)
+            return [m, h]
+
+        best_h = float('Infinity')
+        best_move = moves[0]
+        # for each child node
+        for m in moves:
+            childboard = copy.deepcopy(current_board)
+            childboard.nextMove(side, m)
+            opp = self.opposite(side)
+            [poss_move, h] = self.abMax(childboard, current_depth-1, opp, alpha, beta)
+            if (h < best_h):
+                best_h = h
+                best_move = m
+            if (best_h < beta):
+                beta = best_h
+            if (beta <= alpha):
+                break
+        return [best_move, best_h]
 
     # alphabeta algorithm to be completed by students
     # note: you may add parameters to this function call
     def getAlphaBetaMove(self):
-        ######################
-        ##  Put codes here  ##
-        ######################
-        return
+        alpha = float('-Infinity')
+        beta = float('Infinity')
+        [m, h] = self.abMax(self.b, self.depth, self.s, alpha, beta)
+        return m
 
 
     def opposite(self,s):
