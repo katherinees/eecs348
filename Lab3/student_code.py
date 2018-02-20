@@ -125,7 +125,13 @@ class KnowledgeBase(object):
         printv("Retracting {!r}", 0, verbose, [statement])
         ####################################################
         # Student code goes here
-        
+        f = Fact(statement)
+        print "in kb_retract", f
+        self.facts.remove(f)
+        # print "these are the facts", thefacts
+        # thefacts.remove(f)
+        # print "did i remove it", thefacts
+
 
 class InferenceEngine(object):
     def fc_infer(self, fact, rule, kb):
@@ -137,7 +143,7 @@ class InferenceEngine(object):
             kb (KnowledgeBase) - A KnowledgeBase
 
         Returns:
-            Nothing            
+            Nothing
         """
         printv('Attempting to infer from {!r} and {!r} => {!r}', 1, verbose,
             [fact.statement, rule.lhs, rule.rhs])
