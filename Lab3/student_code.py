@@ -2,7 +2,7 @@ import read, copy
 from util import *
 from logical_classes import *
 
-verbose = 0
+verbose = 1
 
 class KnowledgeBase(object):
     def __init__(self, facts=[], rules=[]):
@@ -57,23 +57,37 @@ class KnowledgeBase(object):
             None
         """
         printv("Adding {!r}", 1, verbose, [fact_rule])
+        # if it's a fact
         if isinstance(fact_rule, Fact):
+            # and it's not already in the KB
             if fact_rule not in self.facts:
+                # add it
                 self.facts.append(fact_rule)
+                # for each rule in the KB, infer with this fact
                 for rule in self.rules:
                     self.ie.fc_infer(fact_rule, rule, self)
+            # if the fact is already in the KB
             else:
+                # if it's supported by stuff
                 if fact_rule.supported_by:
+                    # get the index of the fact in the list of facts
                     ind = self.facts.index(fact_rule)
+                    # for each f that this fact is supported by
                     for f in fact_rule.supported_by:
+                        # add the f to the list of facts that support the fact
                         self.facts[ind].supported_by.append(f)
-
+        # if it's a rule
         elif isinstance(fact_rule, Rule):
+            # if it's not already in the KB
             if fact_rule not in self.rules:
+                # add it to the list of rules
                 self.rules.append(fact_rule)
+                # for each fact in the KB, infer stuff
                 for fact in self.facts:
                     self.ie.fc_infer(fact, fact_rule, self)
+            # if it's already in the KB
             else:
+                # if it's supported by stuff
                 if fact_rule.supported_by:
                     ind = self.rules.index(fact_rule)
                     for f in fact_rule.supported_by:
@@ -98,10 +112,12 @@ class KnowledgeBase(object):
             listof Bindings|False - list of Bindings if result found, False otherwise
         """
         printv("Asking {!r}", 0, verbose, [statement])
+        # if it's a fact
         if factq(statement):
+            # fact-ify it
             f = Fact(statement)
             bindings_lst = ListOfBindings()
-            # ask matched facts
+            # get a list of bindings
             for fact in self.facts:
                 binding = match(f.statement, fact.statement)
                 if binding:
@@ -149,3 +165,49 @@ class InferenceEngine(object):
             [fact.statement, rule.lhs, rule.rhs])
         ####################################################
         # Student code goes here
+        # _, test1 = read.parse_input("fact: (hero Ai)")
+        # fact = Fact(test1)
+        # get the first term on the LHS
+        term1lhs = rule.lhs[0]
+        # print term1lhs
+        # do we have a match? if we do...
+        bound = match(fact.statement, term1lhs)
+        if bound:
+            # print "at line 174" # WHY SO MANY TIMES
+            # create a new LHS.
+            new_lhs = copy.deepcopy(rule.lhs)
+            new_lhs.remove(term1lhs)
+            # if there's nothing in the LHS, then we've satisfied
+            # all the conditions of the original rule. So the RHS
+            # should now become a fact
+            if len(new_lhs) == 0:
+                # the new fact will be supported by everything the old
+                # rule was supported by, plus the rule and fact
+                sup_by = copy.deepcopy(rule.supported_by)
+                sup_by.append([[rule, fact]]) # Why does this not work
+                new_fact = Fact(instantiate(rule.rhs, bound), sup_by)
+                kb.kb_add(new_fact)
+            # we still have conditions left, so we're going to make
+            # a new, shorter rule
+            else:
+                # try to bind fact to RHS
+                inst_rhs = instantiate(rule.rhs, bound)
+                # if that works, then we have a new rule
+                if inst_rhs:
+                    # new rule is supported by everything the old
+                    # rule was supported by, plus rule and fact
+                    # it's basically the old rule, without first
+                    # term of lhs and with a new rhs
+                    sup_by = copy.deepcopy(rule.supported_by)
+                    sup_by.append([[rule, fact]])
+                    new_rule = Rule([new_lhs, inst_rhs], sup_by)
+                    kb.kb_add(new_rule)
+                else:
+                    # otherwise create a new rule, same as old rule
+                    # but without first term of lhs
+                    sup_by = copy.deepcopy(rule.supported_by)
+                    sup_by.append([[rule, fact]])
+                    new_rule = Rule([new_lhs, rule.rhs], sup_by)
+                    kb.kb_add(new_rule)
+            # rule.supported_by.append(fact)
+            # print rule.supported_by
