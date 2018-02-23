@@ -190,23 +190,8 @@ class KnowledgeBase(object):
         ####################################################
         # Student code goes here
         f = Fact(statement)
-        # print "193", factq(f.statement), "nope"
         kbfact = self._get_fact(f)
-        # print "issue?", type(kbfact)
-        # print kbfact
-        # print "why", factq(kbfact)
         self.kb_remove(kbfact)
-        # f = Fact(statement)
-        # print "in kb_retract", f
-        # self.facts.remove(f)
-        # print f
-        # for s in f.supports_facts:
-        #     print "148"
-        #     print s
-
-        # print "these are the facts", thefacts
-        # thefacts.remove(f)
-        # print "did i remove it", thefacts
 
 
 class InferenceEngine(object):
@@ -225,65 +210,41 @@ class InferenceEngine(object):
             [fact.statement, rule.lhs, rule.rhs])
         ####################################################
         # Student code goes here
-        # _, test1 = read.parse_input("fact: (hero Ai)")
-        # fact = Fact(test1)
-        # get the first term on the LHS
         term1lhs = rule.lhs[0]
         # print term1lhs
         # do we have a match? if we do...
         bound = match(fact.statement, term1lhs)
         if bound:
-            # print "at line 174" # WHY SO MANY TIMES
             # create a new LHS.
             lhs_temp = copy.deepcopy(rule.lhs)
             lhs_temp.remove(term1lhs)
             new_lhs = []
             for t in lhs_temp:
                 new_lhs.append(instantiate(t, bound))
-            # if there's nothing in the LHS, then we've satisfied
+            # if there's nothing in the new_lhs, then we've satisfied
             # all the conditions of the original rule. So the RHS
             # should now become a fact
             if len(new_lhs) == 0:
                 # the new fact will be supported by the rule and fact
-                sup_by = [[fact, rule]] # Why does this not work
-                # m = match(fact.statement, rule.rhs)
-                # if m:
-                #     print "188", fact.statement, "matches", rule.rhs
-                #     print "gonna make a new fact with", rule.rhs,"and", bound
+                sup_by = [[fact, rule]]
                 new_fact = Fact(instantiate(rule.rhs, bound), sup_by)
+                # and the rule and fact both support this new fact
                 rule.supports_facts.append(new_fact)
                 fact.supports_facts.append(new_fact)
                 kb.kb_add(new_fact)
-                # and then this rule supports this new fact
 
             # we still have conditions left, so we're going to make
             # a new, shorter rule
             else:
                 # try to bind fact to RHS
-                # if match(fact.statement, rule.rhs):
-                #     print fact.statement, "matches", rule.rhs
                 inst_rhs = instantiate(rule.rhs, bound)
-                # if that works, then we have a new rule
-                if inst_rhs:
-                    # new rule is supported by the rule and fact
-                    # it's basically the old rule, without first
-                    # term of lhs and with a new rhs
-                    sup_by = [[fact, rule]]
-                    new_rule = Rule([new_lhs, inst_rhs], sup_by)
-                    rule.supports_rules.append(new_rule)
-                    fact.supports_rules.append(new_rule)
-                    kb.kb_add(new_rule)
-                    # and the old rule supports the new one
 
-                else:
-                    # otherwise create a new rule, same as old rule
-                    # but without first term of lhs
-                    sup_by = [[fact, rule]]
-                    new_rule = Rule([new_lhs, rule.rhs], sup_by)
-                    rule.supports_rules.append(new_rule)
-                    fact.supports_rules.append(new_rule)
-                    kb.kb_add(new_rule)
-                    # and the old rule supports the new one
-
-            # rule.supported_by.append(fact)
-            # print rule.supported_by
+                # new rule is supported by the rule and fact
+                # it's basically the old rule, without first
+                # term of lhs and with a new rhs
+                sup_by = [[fact, rule]]
+                new_rule = Rule([new_lhs, inst_rhs], sup_by)
+                # and the old rule and fact support this new one
+                rule.supports_rules.append(new_rule)
+                fact.supports_rules.append(new_rule)
+                kb.kb_add(new_rule)

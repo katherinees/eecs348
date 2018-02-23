@@ -1,0 +1,37 @@
+def fc_infer(self, current fact, current rule, kb):
+
+  first we get the first term of the LHS of current rule. do we have a match with the current 
+  fact? if we do:
+
+    create a new LHS using these bindings with the old LHS using instantiate and remove the
+    first term. 
+
+    if the length of the new LHS is 0, then we've satisfied all conditions on the LHS, and the
+    RHS is going to become a new fact, supported by current fact and current rule. the current
+    fact and current rule will support this new fact. 
+
+    if the length of the new LHS isn't 0, then we want to make a new, shorter rule. use the 
+    bindings with the old RHS to make a new RHS. make a new rule, from new LHS to new RHS, 
+    supported by the old fact and old rule. also, the old fact and rule will support this new
+    rule.
+
+def kb_retract(self, statement):
+
+  get the fact from the KB that corresponds to the statement, and use that as argument
+  for kb_remove
+
+def kb_remove(self, fr):
+
+  takes either a rule or a fact. if fr is a fact:
+
+    if it's not supported by anything, then for each fact f that fr supports, we want to remove
+    fr from f's supported_by (which is a list of pairs of facts and rules). also for each f, if
+    that f wasn't asserted, then we try to remove it by kb_remove. we do the same thing for
+    each rule r that fr supports. finally, we remove fr from the KB by self.facts.remove(fr).
+
+  if fr is a rule:
+
+    if it's not supported by anything, then for each fact f that fr supports, we want to remove
+    fr from f's supported by list. if this f wasn't asserted, then we try to remove it by 
+    kb_remove. we do the same thing for each rule r that fr supports. finally, we remove fr 
+    from the KB by self.rules.remove(fr)
