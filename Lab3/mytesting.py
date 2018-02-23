@@ -36,7 +36,7 @@ def main():
     fail = True
     for dtype, item in data:
         if dtype == read.RULE:
-            print "the item is", item
+            # print "the item is", item
             KB.kb_assert(item)
             # if not factq(item):
             #     print "SCREAM", Rule(item)
@@ -86,44 +86,57 @@ def main():
                 _, test2_4 = read.parse_input("fact: (dead ?dragon)")
                 print " Asking", test2_4
                 answer = KB.kb_ask(test2_4)
-                #pprint_justification(answer)
+                # pprint_justification(answer)
                 if answer and len(answer)==1 and answer[0]['?dragon'] == 'Nosliw':
                     print " Pass Part 4\nPass Test 2\n"
                     fail = False
     if fail:
         print "Fail Test 2\n"
-    #
-    # print "Starting Test 3"
-    # fail = True
-    # _, possesses = read.parse_input("fact: (possesses Ai Loot)")
-    # print " Retracting", possesses
-    # KB.kb_retract(possesses)
-    # _, test3_1 = read.parse_input("fact: (dead ?dragon)")
-    # print " Asking", test3_1
-    # answer = KB.kb_ask(test3_1)
-    # #pprint_justification(answer)
-    # if not answer:
-    #     print " Pass Part 1"
-    #     print " Asserting", possesses
-    #     KB.kb_assert(possesses)
-    #     _, sleeping = read.parse_input("fact: (sleeping Nosliw)")
-    #     _, safe = read.parse_input("rule: (sleeping Nosliw) -> (safe HappyDale)")
-    #     print " Asserting", sleeping
-    #     KB.kb_assert(sleeping)
-    #     print " Asserting", safe
-    #     KB.kb_assert(safe)
-    #     print " Retracting", possesses
-    #     KB.kb_retract(possesses)
-    #     _, possesses = read.parse_input("fact: (possesses Ai Loot)")
-    #     _, test3_2 = read.parse_input("fact: (safe ?town)")
-    #     print " Asking", test3_2
-    #     answer = KB.kb_ask(test3_2)
-    #     #pprint_justification(answer)
-    #     if answer and len(answer)==1 and answer[0]['?town'] == 'HappyDale':
-    #         print " Pass Part 2\nPass Test 3\n"
-    #         fail = False
-    # if fail:
-    #     print "Fail Test 3\n"
+
+    # DEBUGGING FOR TEST 2
+    # answer = KB.kb_ask(test2_4)
+    for f in KB.facts:
+        print f.statement, "\n"
+    # f = KB.facts[0]
+    # print "the fact", f.statement
+    # for s in f.supported_by[0]:
+    #     print s
+    # print "consider the fact", f.statement
+    # print f.asserted
+    # for sf in f.supported_by:
+    #     print sf, "\n"
+
+    print "Starting Test 3"
+    fail = True
+    _, possesses = read.parse_input("fact: (possesses Ai Loot)")
+    print " Retracting", possesses
+    KB.kb_retract(possesses)
+    _, test3_1 = read.parse_input("fact: (dead ?dragon)")
+    print " Asking", test3_1
+    answer = KB.kb_ask(test3_1)
+    #pprint_justification(answer)
+    if not answer:
+        print " Pass Part 1"
+        print " Asserting", possesses
+        KB.kb_assert(possesses)
+        _, sleeping = read.parse_input("fact: (sleeping Nosliw)")
+        _, safe = read.parse_input("rule: (sleeping Nosliw) -> (safe HappyDale)")
+        print " Asserting", sleeping
+        KB.kb_assert(sleeping)
+        print " Asserting", safe
+        KB.kb_assert(safe)
+        print " Retracting", possesses
+        KB.kb_retract(possesses)
+        _, possesses = read.parse_input("fact: (possesses Ai Loot)")
+        _, test3_2 = read.parse_input("fact: (safe ?town)")
+        print " Asking", test3_2
+        answer = KB.kb_ask(test3_2)
+        #pprint_justification(answer)
+        if answer and len(answer)==1 and answer[0]['?town'] == 'HappyDale':
+            print " Pass Part 2\nPass Test 3\n"
+            fail = False
+    if fail:
+        print "Fail Test 3\n"
 
 
 def pprint_justification(answer):
