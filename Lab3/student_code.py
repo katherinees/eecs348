@@ -129,6 +129,54 @@ class KnowledgeBase(object):
             print "Invalid ask:", statement
             return False
 
+    def kb_remove(self, fr):
+        # if it's a fact
+        if isinstance(fr, Fact):
+            # and it's not supported by anything
+            if len(fr.supported_by) == 0:
+                # for each fact that it supports
+                for f in fr.supports_facts:
+                    # remove fr from f's supported_by
+                    sup_by = f.supported_by
+                    for pair in sup_by:
+                        if pair[0] == fr:
+                            sup_by.remove(pair)
+                    # if that fact wasn't asserted, remove it
+                    if not f.asserted:
+                        self.kb_remove(f)
+                # for each rule that it supports
+                for r in fr.supports_rules:
+                    # remove fr from r's supported_by
+                    sup_by = r.supported_by
+                    for pair in sup_by:
+                        if pair[0] == fr:
+                            sup_by.remove(pair)
+                    # if that rule wasn't asserted, remove it
+                    if not r.asserted:
+                        self.kb_remove(r)
+                self.facts.remove(fr)
+        else: # fr is a rule
+            # if it's unsupported, we're going to delete it
+            if len(fr.supported_by) == 0:
+                # for each fact it supports
+                for f in fr.supports_facts:
+                    # remove it from that fact's supported_by
+                    sup_by = f.supported_by
+                    for pair in sup_by:
+                        if pair[1] == fr:
+                            sup_by.remove(pair)
+                    # and if that fact wasn't asserted, try to remove it
+                    if not f.asserted:
+                        self.kb_remove(f)
+                for r in fr.supports_rules:
+                    sup_by = f.supported_by
+                    for pair in sup_by:
+                        if pair[1] == fr:
+                            sup_by.remove(pair)
+                    if not r.asserted:
+                        self.kb_remove(r)
+                self.rules.remove(fr)
+
     def kb_retract(self, statement):
         """Retract a fact from the KB
 
@@ -142,12 +190,19 @@ class KnowledgeBase(object):
         ####################################################
         # Student code goes here
         f = Fact(statement)
-        print "in kb_retract", f
-        self.facts.remove(f)
-        print f
-        for s in f.supports_facts:
-            print "148"
-            print s
+        # print "193", factq(f.statement), "nope"
+        kbfact = self._get_fact(f)
+        # print "issue?", type(kbfact)
+        # print kbfact
+        # print "why", factq(kbfact)
+        self.kb_remove(kbfact)
+        # f = Fact(statement)
+        # print "in kb_retract", f
+        # self.facts.remove(f)
+        # print f
+        # for s in f.supports_facts:
+        #     print "148"
+        #     print s
 
         # print "these are the facts", thefacts
         # thefacts.remove(f)
@@ -191,10 +246,10 @@ class InferenceEngine(object):
             if len(new_lhs) == 0:
                 # the new fact will be supported by the rule and fact
                 sup_by = [[fact, rule]] # Why does this not work
-                m = match(fact.statement, rule.rhs)
-                if m:
-                    print "188", fact.statement, "matches", rule.rhs
-                    print "gonna make a new fact with", rule.rhs,"and", bound
+                # m = match(fact.statement, rule.rhs)
+                # if m:
+                #     print "188", fact.statement, "matches", rule.rhs
+                #     print "gonna make a new fact with", rule.rhs,"and", bound
                 new_fact = Fact(instantiate(rule.rhs, bound), sup_by)
                 rule.supports_facts.append(new_fact)
                 fact.supports_facts.append(new_fact)
@@ -205,8 +260,8 @@ class InferenceEngine(object):
             # a new, shorter rule
             else:
                 # try to bind fact to RHS
-                if match(fact.statement, rule.rhs):
-                    print fact.statement, "matches", rule.rhs
+                # if match(fact.statement, rule.rhs):
+                #     print fact.statement, "matches", rule.rhs
                 inst_rhs = instantiate(rule.rhs, bound)
                 # if that works, then we have a new rule
                 if inst_rhs:

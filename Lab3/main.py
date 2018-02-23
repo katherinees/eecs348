@@ -28,7 +28,7 @@ def main():
     answer = KB.kb_ask(ask1)
     # pprint_justification(answer)
     print (("Fail" if answer else "Pass") + " Test 1\n")
-    
+
     print "Starting Test 2"
     fail = True
     for dtype, item in data:
@@ -116,7 +116,7 @@ def pprint_support(fact_rule, indent):
     """Recursive pretty printer helper to nicely indent
     """
     if fact_rule:
-        print " "*indent, "Support for", 
+        print " "*indent, "Support for",
 
         if isinstance(fact_rule, Fact):
             print fact_rule.statement

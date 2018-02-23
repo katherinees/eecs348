@@ -97,7 +97,8 @@ def main():
     # answer = KB.kb_ask(test2_4)
     for f in KB.facts:
         print f.statement, "\n"
-    # f = KB.facts[0]
+    f = KB.facts[7]
+    print f
     # print "the fact", f.statement
     # for s in f.supported_by[0]:
     #     print s
