@@ -99,6 +99,11 @@ def main():
         print f.statement, "\n"
     f = KB.facts[2]
     print "this is the fact", f
+    print "what", isinstance(f.statement, Statement)
+    dummy = Fact(['possesses', 'Ai', 'code'])
+    print dummy
+    dummy2 = Fact(['a', 'b', 'c', 'd'])
+    print "HELLO", KB._get_fact(dummy)
     # print "the fact", f.statement
     # for s in f.supported_by[0]:
     #     print s
@@ -115,6 +120,7 @@ def main():
     _, test3_1 = read.parse_input("fact: (dead ?dragon)")
     print " Asking", test3_1
     answer = KB.kb_ask(test3_1)
+    print "I HATE IT", factq(['a'])
     #pprint_justification(answer)
     if not answer:
         print " Pass Part 1"

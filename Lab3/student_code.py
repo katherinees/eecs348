@@ -189,8 +189,14 @@ class KnowledgeBase(object):
         printv("Retracting {!r}", 0, verbose, [statement])
         ####################################################
         # Student code goes here
+        can_be_fact = factq(statement)
+        # print "can it be a fact??", can_be_fact
+        if not can_be_fact:
+            return
         f = Fact(statement)
         kbfact = self._get_fact(f)
+        if not kbfact:
+            return
         self.kb_remove(kbfact)
 
 
