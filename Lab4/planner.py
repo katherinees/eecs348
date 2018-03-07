@@ -1,7 +1,7 @@
 import urllib2, json, sys, os
 
 class Plan(object):
-    """ Object representing the results of finding a plan.  If planning is successful, then ok will be true, 
+    """ Object representing the results of finding a plan.  If planning is successful, then ok will be true,
         plan will have the names of the list of actions, and actions will have the full description of each action in the plan
 
     Attributes:
@@ -32,7 +32,7 @@ def file_paths(d, p):
     return domain_file, problem_file
 
 def find_plan(domain, problem):
-    """ Get the plan for the 
+    """ Get the plan for the
 
     Args:
         domain (str): name of the domain file
