@@ -42,7 +42,7 @@ def find_plan(domain, problem):
     data = {'domain': open(domain, 'r').read(),
             'problem': open(problem, 'r').read()}
 
-    req = urllib2.Request('http://solver.planning.domains/solve')
+    req = urllib2.Request('https://fast-brushlands-56885.herokuapp.com/solve')
     req.add_header('Content-Type', 'application/json')
     resp = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
     plan = Plan(resp)

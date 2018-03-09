@@ -1,30 +1,29 @@
 (define (domain nosliw)
     (:requirements :strips :typing)
-  (:types agent item location - default_object
+  (:types noun location - default_object
+        agent item - noun
         hero dragon wizard - agent
         sword pen diamond - item
         town mountain cave - location
         sorceress - wizard
   )
     (:predicates
-  	    (at ?who ?where)
-  	    (path-from-to ?from ?to)
-        (possesses ?who ?what)
+  	    (at ?who - noun ?where - location)
+  	    (path-from-to ?from - location ?to - location)
+        (possesses ?who - agent ?what - item)
         (different ?a ?b)
-        ;(magical ?who)
-        (strong ?who)
-        (asleep ?who)
-        (dead ?who)
-        (safe ?where)
-        ;(hero ?h)
+        (strong ?who - hero)
+        (asleep ?who - agent)
+        (dead ?who - agent)
+        (safe ?where - town)
     )
 
-    (:action inferdiff
-        :parameters (?item1 - item ?item2 - item)
-        :precondition (different ?item1 ?item2)
-        :effect (and (different ?item1 ?item2)
-                    (different ?item2 ?item1))
-    )
+    ;(:action inferdiff
+    ;    :parameters (?item1 - item ?item2 - item)
+    ;    :precondition (different ?item1 ?item2)
+    ;    :effect (and
+    ;                (different ?item2 ?item1))
+    ;)
 
     (:action travel
      	 :parameters (?who - hero ?from - location ?to - location)
@@ -69,12 +68,9 @@
                             (possesses ?h ?i1)
                             (possesses ?h ?i2)
                             (possesses ?h ?i3)
-                            (different ?i1 ?i2)
-                            (different ?i2 ?i3)
-                            (different ?i3 ?i1))
-                            ;(or (different ?i1 ?i2) (different ?i2 ?i1))
-                            ;(or (different ?i2 ?i3) (different ?i3 ?i2))
-                            ;(or (different ?i3 ?i1) (different ?i1 ?i3)))
+                            (or (different ?i2 ?i1) (different ?i1 ?i2))
+                            (or (different ?i3 ?i2) (different ?i2 ?i3))
+                            (or (different ?i1 ?i3) (different ?i3 ?i1)))
         :effect (and (strong ?h)
                     (not (possesses ?h ?i1))
                     (not (possesses ?h ?i2))
@@ -99,7 +95,7 @@
                             (strong ?h)
                             (possesses ?h ?s))
         :effect (and (dead ?d)
-                    (not (asleep ?d))
+                    (when (asleep ?d) (not (asleep ?d)))
                     (safe ?hd))
     )
 
