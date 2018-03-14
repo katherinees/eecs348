@@ -13,7 +13,7 @@ def check_imports(source_name):
         if tokens[i] == 'import':
             imports.append(tokens[i+1])
 
-    with open('solution_code.py',"r") as f:
+    with open('student_code.py',"r") as f:
         tokens = f.read().replace("\n", " ").split()
 
     for i in range(len(tokens)-1):
@@ -28,7 +28,7 @@ def check_imports(source_name):
 def f_score(filename,predict):
 
     actual = []
-      
+
     with open(filename,'rt') as f:
         lines = f.readlines()
 
@@ -58,12 +58,12 @@ def f_score(filename,predict):
     f_score = float(2.0)*precision*recall/(precision+recall)
 
     return(f_score)
-    
+
 def main():
-   
+
     source_name = sys.argv[0]
     check_imports(source_name)
-   
+
     bayes = nbc.Bayes_Classifier()
     bayes.train('train.txt')
     predict = bayes.classify('classifyA.txt')
@@ -76,5 +76,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-    
