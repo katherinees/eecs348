@@ -2,12 +2,48 @@ import math
 import sys
 import student_code as nbc
 
+def f_score(filename,predict):
+
+    actual = []
+
+    with open(filename,'rt') as f:
+        lines = f.readlines()
+
+    for line in lines:
+        line = line.replace('\n','')
+        fields = line.split('|')
+        wID = int(fields[0])
+        sentiment = fields[1]
+        actual.append(sentiment)
+
+    tp = 0
+    fp = 0
+    tn = 0
+    fn = 0
+    for i in range(len(actual)):
+        if predict[i] == '5' and actual[i] == '5':
+            tp = tp + 1
+        if predict[i] == '5' and actual[i] == '1':
+            fp = fp + 1
+        if predict[i] == '1' and actual[i] == '1':
+            tn = tn + 1
+        if predict[i] == '1' and actual[i] == '5':
+            fn = fn + 1
+
+    precision = float(tp)/float(tp+fp)
+    recall = float(tp)/float(tp+fn)
+    f_score = float(2.0)*precision*recall/(precision+recall)
+
+    return(f_score)
+
 bc = nbc.Bayes_Classifier()
 bc.train('train.txt')
-print sorted(bc.word_freq_neg, key = bc.word_freq_neg.get, reverse = True)
-print bc.word_freq_pos['funny'], bc.pos_w_total
-print bc.neg_r_total
-bc.classify('train.txt')
+# print sorted(bc.word_freq_neg, key = bc.word_freq_neg.get, reverse = True)
+# print bc.word_freq_pos['funny'], bc.pos_w_total
+# print bc.neg_r_total
+predict = bc.classify('classifyA.txt')
+fA = f_score('answersA.txt',predict)
+print 'the f score is', fA
 # actual = []
 # words_pos = []
 # word_freq_pos = {}
