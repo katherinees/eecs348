@@ -37,13 +37,17 @@ def f_score(filename,predict):
     return(f_score)
 
 bc = nbc.Bayes_Classifier()
-bc.train('train.txt')
+bc.train('tiny.txt')
+# for w in bc.word_freq_neg:
+#     print(w, bc.word_freq_neg[w])
+
 # print sorted(bc.word_freq_neg, key = bc.word_freq_neg.get, reverse = True)
 # print bc.word_freq_pos['funny'], bc.pos_w_total
 # print bc.neg_r_total
-predict = bc.classify('classifyA.txt')
-fA = f_score('answersA.txt',predict)
-print 'the f score is', fA
+predict = bc.classify('train.txt')
+# print predict
+# fA = f_score('answersA.txt',predict)
+# print 'the f score is', fA
 # actual = []
 # words_pos = []
 # word_freq_pos = {}
