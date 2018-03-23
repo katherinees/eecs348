@@ -46,11 +46,11 @@ predict = bc1.classify('halfA.txt')
 fA = f_score('answershalfA.txt',predict)
 print 'less skew data f score is', fA
 
-bc2 = nbc.Bayes_Classifier()
-bc2.train_improve('train_short.txt')
-predict = bc2.classify_improve('halfA.txt')
-fA = f_score('answershalfA.txt',predict)
-print 'less skew improved?  f is', fA
+# bc2 = nbc.Bayes_Classifier()
+# bc2.train_improve('train_short.txt')
+# predict = bc2.classify_improve('halfA.txt')
+# fA = f_score('answershalfA.txt',predict)
+# print 'less skew improved?  f is', fA
 
 bc3 = nbc.Bayes_Classifier()
 bc3.train('train.txt')
@@ -58,11 +58,11 @@ predict = bc3.classify('classifyA.txt')
 fA = f_score('answersA.txt',predict)
 print 'more skew data f score is', fA
 
-bc4 = nbc.Bayes_Classifier()
-bc4.train_improve('train.txt')
-predict = bc4.classify_improve('classifyA.txt')
-fA = f_score('answersA.txt',predict)
-print 'more skew improves?  f is', fA
+# bc4 = nbc.Bayes_Classifier()
+# bc4.train_improve('train.txt')
+# predict = bc4.classify_improve('classifyA.txt')
+# fA = f_score('answersA.txt',predict)
+# print 'more skew improves?  f is', fA
 
 # 'sses' stem no change ls, slight hurt ms
 # '!' never seems to help??? feel like it should
