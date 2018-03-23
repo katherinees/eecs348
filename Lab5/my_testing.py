@@ -5,6 +5,7 @@ import student_code as nbc
 def f_score(filename,predict):
 
     actual = []
+    ids = []
 
     with open(filename,'rt') as f:
         lines = f.readlines()
@@ -13,6 +14,7 @@ def f_score(filename,predict):
         line = line.replace('\n','')
         fields = line.split('|')
         wID = int(fields[0])
+        ids.append(wID)
         sentiment = fields[1]
         actual.append(sentiment)
 
@@ -25,10 +27,12 @@ def f_score(filename,predict):
             tp = tp + 1
         if predict[i] == '5' and actual[i] == '1':
             fp = fp + 1
+            # print 'predicted 5 but actually 1', ids[i]
         if predict[i] == '1' and actual[i] == '1':
             tn = tn + 1
         if predict[i] == '1' and actual[i] == '5':
             fn = fn + 1
+            # print 'predicted 1 but actually 5', ids[i]
 
     precision = float(tp)/float(tp+fp)
     recall = float(tp)/float(tp+fn)
@@ -36,66 +40,29 @@ def f_score(filename,predict):
 
     return(f_score)
 
-bc = nbc.Bayes_Classifier()
-bc.train('tiny.txt')
-# for w in bc.word_freq_neg:
-#     print(w, bc.word_freq_neg[w])
+bc1 = nbc.Bayes_Classifier()
+bc1.train('train_short.txt')
+predict = bc1.classify('halfA.txt')
+fA = f_score('answershalfA.txt',predict)
+print 'less skew data f score is', fA
 
-# print sorted(bc.word_freq_neg, key = bc.word_freq_neg.get, reverse = True)
-# print bc.word_freq_pos['funny'], bc.pos_w_total
-# print bc.neg_r_total
-predict = bc.classify('train.txt')
-# print predict
-# fA = f_score('answersA.txt',predict)
-# print 'the f score is', fA
-# actual = []
-# words_pos = []
-# word_freq_pos = {}
-# word_freq_neg = {}
-# too_common = ['.', ',', 'the', 'movie', 'to', 'of', 'a', 'in', 'I', 'This',
-#                 'of', 'is', 'this', 'as', 'at']
-# pos_total = 0
-# neg_total = 0
-#
-#
-# with open('train.txt','rt') as f:
-#     lines = f.readlines()
-#
-# for line in lines:
-#     line = line.replace('\n','')
-#     fields = line.split('|')
-#     wID = int(fields[0])
-#     sentiment = fields[1]
-#     actual.append(sentiment)
-#     if sentiment == '5':
-#         pos_total += 1
-#         # print fields[2]
-#         words = fields[2].split()
-#         for w in words:
-#             if (w in too_common):
-#                 break
-#             if w in word_freq_pos:
-#                 word_freq_pos[w] += 1
-#             else:
-#                 word_freq_pos[w] = 1
-#     else: # sentiment == '1'
-#         neg_total += 1
-#         words = fields[2].split()
-#         for w in words:
-#             if (w in too_common):
-#                 break
-#             if w in word_freq_neg:
-#                 word_freq_neg[w] += 1
-#             else:
-#                 word_freq_neg[w] = 1
-#
-# # print word_freq_pos
-# # print word_freq_neg
-# k = max(word_freq_pos, key = word_freq_pos.get)
-# s = max(word_freq_neg, key = word_freq_neg.get)
-# print 'most positive word', k, word_freq_pos[k]
-# print 'pos reviews', pos_total
-# print 'most negative word', s, word_freq_neg[s]
-# print 'neg reviews', neg_total
-# print 'neg', sorted(word_freq_neg, key = word_freq_neg.get, reverse = True)
-# print 'pos', sorted(word_freq_pos, key = word_freq_pos.get, reverse = True)
+bc2 = nbc.Bayes_Classifier()
+bc2.train_improve('train_short.txt')
+predict = bc2.classify_improve('halfA.txt')
+fA = f_score('answershalfA.txt',predict)
+print 'less skew improved?  f is', fA
+
+bc3 = nbc.Bayes_Classifier()
+bc3.train('train.txt')
+predict = bc3.classify('classifyA.txt')
+fA = f_score('answersA.txt',predict)
+print 'more skew data f score is', fA
+
+bc4 = nbc.Bayes_Classifier()
+bc4.train_improve('train.txt')
+predict = bc4.classify_improve('classifyA.txt')
+fA = f_score('answersA.txt',predict)
+print 'more skew improves?  f is', fA
+
+# 'sses' stem no change ls, slight hurt ms
+# '!' never seems to help??? feel like it should
